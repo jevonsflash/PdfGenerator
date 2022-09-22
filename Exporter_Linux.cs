@@ -1,13 +1,15 @@
 ﻿using Flurl.Http;
-using PdfSharp.Drawing;
-using PdfSharp.Pdf;
-using PdfSharp.Pdf.AcroForms;
-using PdfSharp.Pdf.IO;
+using PdfSharpCore.Drawing;
+using PdfSharpCore.Fonts;
+using PdfSharpCore.Pdf;
+using PdfSharpCore.Pdf.AcroForms;
+using PdfSharpCore.Pdf.IO;
 using System.Reflection;
+
 
 namespace PdfGenerator
 {
-    public class Exporter
+    public class Exporter_Linux
     {
         public static PdfDocument ExportDocxByObject(Stream templateStream, object data)
         {
@@ -42,6 +44,10 @@ namespace PdfGenerator
             {
                 var run = form.Fields[fieldName] as PdfTextField;
                 text = run.Name;
+                XPdfFontOptions options = new XPdfFontOptions(PdfFontEncoding.Unicode);
+
+                XFont font = new XFont(GlobalFontSettings.FontResolver.DefaultFontName, 18, XFontStyle.Regular, options);
+                run.Font=font;
                 foreach (PropertyInfo p in pi)
                 {
                     string key = $"${p.Name}$";
@@ -84,7 +90,7 @@ namespace PdfGenerator
                                     var xForm = new XForm(doc, rectangle.Size);
                                     using (var xGraphics = XGraphics.FromPdfPage(doc.Pages[0]))
                                     {
-                                        var image = XImage.FromStream(fileStream);
+                                        var image = XImage.FromStream(()=>fileStream);
                                         xGraphics.DrawImage(image, rectangle.ToXRect() +new XPoint(0, 400));
                                         var state = xGraphics.Save();
                                         xGraphics.Restore(state);
@@ -102,7 +108,7 @@ namespace PdfGenerator
                                     var xForm = new XForm(doc, rectangle.Size);
                                     using (var xGraphics = XGraphics.FromPdfPage(doc.Pages[0]))
                                     {
-                                        var image = XImage.FromStream(fileStream);
+                                        var image = XImage.FromStream(() => fileStream);
                                         xGraphics.DrawImage(image, rectangle.ToXRect() +new XPoint(0, 400));
                                         var state = xGraphics.Save();
                                         xGraphics.Restore(state);

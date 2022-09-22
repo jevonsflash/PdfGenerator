@@ -19,7 +19,7 @@ namespace PdfGenerator
             Console.WriteLine("Generator begin");
 
             var docinfo = GetRecipeDocInfo();
-            var result = Exporter.ExportDocxByObject(templatePath_Pdf, docinfo);
+            var result = Exporter_Linux.ExportDocxByObject(templatePath_Pdf, docinfo);
             byte[] fileContent;
             result.Save(outputPath_Pdf);
             Console.WriteLine(outputPath_Pdf);
